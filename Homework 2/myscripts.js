@@ -1,3 +1,4 @@
+"use strict";
 function requestImage() {
       //alert(111)
       
