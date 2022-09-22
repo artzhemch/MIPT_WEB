@@ -1,0 +1,31 @@
+:root {
+  --main-bg-color: rgb(200, 200, 200);
+  --text-color: black;
+}
+
+body {
+    background-color: var(--main-bg-color);
+    color: var(--text-color);
+    font-family: Arial;
+}
+
+div {
+    text-align: justify;
+
+}
+
+footer {
+    color: rgb(150, 150, 150);
+    font-family: cursive;
+    text-align: right;
+}
+
+div>p {
+    color: rgb(160, 160, 190);
+
+}
+
+.example1{
+    font-family: cursive;
+}
+
