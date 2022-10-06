@@ -1,0 +1,9 @@
+version: '3.0'
+services:
+   nginx:
+    image: nginx:latest
+    container_name: web_tech
+    ports:
+      - 80:80
+    volumes:
+      - .:/usr/share/nginx/html
