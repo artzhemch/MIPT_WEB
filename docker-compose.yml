@@ -1,9 +1,11 @@
-version: '3.0'
+version: '3'
 services:
-   nginx:
-    image: nginx:latest
-    container_name: web_tech
-    ports:
-      - 80:80
+  go:
+    build: ./goserver
+    container_name: go-server
+    restart: on-failure
     volumes:
-      - .:/usr/share/nginx/html
+      - ./goserver:/goserver
+    command: go run main.go
+    ports:
+      - "80:80"
