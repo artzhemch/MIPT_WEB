@@ -1,0 +1,63 @@
+version: '3'
+
+services:
+ kafka:
+   image: wurstmeister/kafka
+   depends_on:
+     - zookeeper
+   ports:
+     - 9092:9092
+     - 9093:9093
+   environment:
+     KAFKA_BROKER_ID: 1
+     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+     KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+     KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9093,OUTSIDE://localhost:9092
+     KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+     KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+     KAFKA_LOG4J_ROOT_LOGLEVEL: INFO
+     KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+     KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+     KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+     KAFKA_MESSAGE_MAX_BYTES: 10485760
+     KAFKA_SOCKET_REQUEST_MAX_BYTES: 100001200
+   restart: always
+   volumes:
+     - ./kafka-data:/var/lib/kafka/data
+
+ zookeeper:
+   image: wurstmeister/zookeeper
+   ports:
+     - 2181:2181
+   restart: always
+   volumes:
+     - ./zk-data:/var/lib/zookeeper/data \
+     - ./zk-txn-logs:/var/lib/zookeeper/log \
+
+ kafka-actualizer:
+   image: confluentinc/cp-kafka
+   depends_on:
+     - kafka
+   volumes:
+     - ./docker/wait-for-it.sh:/wait-for-it.sh
+   command: |
+     bash -c '/wait-for-it.sh --timeout=0 -s kafka:9092 && \
+     kafka-topics --create --if-not-exists --topic src-data --partitions 8 --replication-factor 1 --zookeeper zookeeper:2181 && \
+     kafka-topics --create --if-not-exists --topic processed-data --partitions 8 --replication-factor 1 --zookeeper zookeeper:2181 && \
+     kafka-topics --create --if-not-exists --topic aggregated-data --partitions 8 --replication-factor 1 --zookeeper zookeeper:2181 && \
+     exit 0'
+   environment:
+     KAFKA_BROKER_ID: ignored
+     KAFKA_ZOOKEEPER_CONNECT: ignored
+     
+ go:
+    build: ./goserver
+    container_name: go-messenger
+    restart: on-failure
+    volumes:
+      - ./goserver:/goserver
+    command: go run main.go
+    ports:
+      - "80:9093"
