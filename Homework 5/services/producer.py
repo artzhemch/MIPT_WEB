@@ -2,7 +2,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from kafka import KafkaProducer
 import redis
 
-from paramaters import REDIS_PORT, KAFKA_PORT, SERVER_PORT
+from parameters import REDIS_PORT, KAFKA_PORT, SERVER_PORT
 # Порт Кафки 9092, Редиса 6379, HTTP Сервера 8901
 
 
