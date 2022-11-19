@@ -2,7 +2,7 @@ from kafka import KafkaConsumer
 import time
 import redis
 
-from paramaters import REDIS_PORT, KAFKA_PORT, SERVER_PORT, WAIT_TIME
+from parameters import REDIS_PORT, KAFKA_PORT, SERVER_PORT, WAIT_TIME
 # Порт Редиса 6379 (такой же как в http-task)
 
 
