@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+   nginx:
+    image: nginx:latest
+    container_name: hw7
+    ports:
+      - 80:80
+    volumes:
+      - .:/usr/share/nginx/html
+    
+# shell:
+# docker-compose build
+# docker-compose up -d
+# docker logs hw7 -f
