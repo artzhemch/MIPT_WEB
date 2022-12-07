@@ -21,7 +21,13 @@ services:
     links: 
       - redis
       - broker
-      
+  nginx:
+    build: ./nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - producer
+      - consumer
   zookeeper:
       image: confluentinc/cp-zookeeper:6.1.1
       hostname: zookeeper
@@ -181,3 +187,4 @@ services:
       STREAMS_BOOTSTRAP_SERVERS: broker:29092
       STREAMS_SCHEMA_REGISTRY_HOST: schema-registry
       STREAMS_SCHEMA_REGISTRY_PORT: 8081
+  
