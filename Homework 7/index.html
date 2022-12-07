@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <title>hw7</title>
+  </head>
+  <body>
+    <script>
+    async function regWorker () {
+      const publicKey = "MFswDQYJKoZIhvcNAQEBBQADSgAwRwJAa5IKqT7m4KcJ0np38M1Jaa25HLYYDJuXr+O0YfmDzLrKidFOaXBKgEqrLuomZMBQ6SIeg/aPv2j6QqbFXi6+0QIDAQAB";
+      const reg = await navigator.serviceWorker.register("push-listener.js", { scope: "/" });
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: publicKey
+      });
+
+      await fetch("/sendpush", {
+        method: "POST",
+        body: JSON.stringify(sub),
+        headers: { "content-type": "application/json" }
+      });
+    }
+
+    if (Notification.permission === "default") {
+      Notification.requestPermission().then((perm) => {
+        if (Notification.permission === "granted") {
+          regWorker().catch((err) => { console.error(err); } );
+        }
+        else { alert("Please allow notifications."); }
+      });
+    }
+    else if (Notification.permission === "granted") {
+      regWorker().catch((err) => { console.error(err); } );
+    }
+    else { alert("Please allow notifications."); }
+    </script>
+  </body>
+</html>
